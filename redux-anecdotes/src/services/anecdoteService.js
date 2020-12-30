@@ -25,7 +25,6 @@ const createNew = async (newContent) => {
   })
 
   const newAnecdote = asObject(newContent)
-  console.log(newAnecdote)
   const response = await axios.post(baseUrl, newAnecdote)
   return response.data
 }

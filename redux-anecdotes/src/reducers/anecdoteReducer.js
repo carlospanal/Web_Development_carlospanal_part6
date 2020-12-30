@@ -2,8 +2,6 @@ import anecdoteService from '../services/anecdoteService'
 // const initialState = anecdotesAtStart.map(asObject)
 
 const anecdoteReducer = (state = [], action) => {
-  console.log('state now: ', state)
-  console.log('action', action)
   switch (action.type) {
   case 'INCREASEVOTES': {
     const votedAnecdote = state.filter((anecdote) => anecdote.id === action.data.id)
@@ -15,7 +13,6 @@ const anecdoteReducer = (state = [], action) => {
   case 'NEWANECDOTE': {
     const newAnecdote = action.data.content
     const newState = state.concat(newAnecdote)
-    console.log(newState)
     return newState
   }
   case 'INIANECDOTES': {

@@ -2,10 +2,8 @@ const initialState = {
   content: 'Page was successfully loaded',
   visible: true,
 }
-
+let timeoutID = null
 const notificationReducer = (state = initialState, action) => {
-  console.log('state now: ', state)
-  console.log('action', action)
   switch (action.type) {
   case 'CHANGENOTIFICATION': {
     const newState = {
@@ -29,8 +27,12 @@ export const hideReducer = () => ({
   type: 'HIDENOTIFICATION',
 })
 
-export const changeReducer = (newNotification, msTime) => async (dispatch) => {
-  setTimeout(() => (dispatch({
+export const changeReducer = (newNotification, msTime) => (dispatch) => {
+  // clearTimeout(timeoutID)
+  if (timeoutID) {
+    clearTimeout(timeoutID)
+  }
+  timeoutID = setTimeout(() => (dispatch({
     type: 'HIDENOTIFICATION',
   })), msTime)
   dispatch({

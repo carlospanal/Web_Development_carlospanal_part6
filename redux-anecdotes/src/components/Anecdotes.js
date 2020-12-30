@@ -1,34 +1,35 @@
+/* eslint-disable react/forbid-prop-types */
 import React from 'react'
-import { useDispatch, useSelector } from 'react-redux'
+import { connect } from 'react-redux'
+import PropTypes from 'prop-types'
 import { voterReducer } from '../reducers/anecdoteReducer'
 import { changeReducer } from '../reducers/notificationReducer'
 
-const Anecdotes = () => {
-  const iniAnecdotes = useSelector((state) => state.anecdotes)
-
-  const anecdotes = (() => {
+const Anecdotes = (props) => {
+  const { anecdotes, filter } = props
+  const iniAnecdotes = anecdotes
+  const sortedAnecdotes = (() => {
     if (iniAnecdotes.length > 1) {
       return iniAnecdotes.sort((a, b) => ((a.votes > b.votes) ? -1 : 1))
     }
     return iniAnecdotes
   })()
-  const dispatch = useDispatch()
-  const filter = useSelector((state) => state.filter)
 
   const vote = (id) => {
-    const votedAnecdote = anecdotes.filter((anecdote) => anecdote.id === id)
-    dispatch(voterReducer(votedAnecdote[0]))
+    const votedAnecdote = sortedAnecdotes.filter((anecdote) => anecdote.id === id)
+    props.voterReducer(votedAnecdote[0])
     /* dispatch(changeReducer(`you have voted ${votedAnecdote[0].content}`))
     setTimeout(() => {
       dispatch(hideReducer())
     }, 5000)
     */
-    dispatch(changeReducer(`you voted '${votedAnecdote[0].content}'`, 2000))
+    props.changeReducer(`you voted '${votedAnecdote[0].content}'`, 2000)
   }
 
   if (iniAnecdotes.length > 0) {
-    console.log(anecdotes)
-    const filteredAnecdotes = anecdotes.filter((anecdote) => anecdote.content.includes(filter))
+    const filteredAnecdotes = sortedAnecdotes.filter(
+      (anecdote) => anecdote.content.includes(filter),
+    )
     return (
       <div>
         <h2>Anecdotes</h2>
@@ -51,5 +52,21 @@ const Anecdotes = () => {
 
   return null
 }
+Anecdotes.propTypes = {
+  anecdotes: PropTypes.array.isRequired,
+  filter: PropTypes.string.isRequired,
+  voterReducer: PropTypes.func.isRequired,
+  changeReducer: PropTypes.func.isRequired,
+}
+const mapStateToProps = (state) => ({
+  anecdotes: state.anecdotes,
+  filter: state.filter,
+})
 
-export default Anecdotes
+const mapDispatchToProps = {
+  voterReducer,
+  changeReducer,
+}
+
+const ConnectedAnecdotes = connect(mapStateToProps, mapDispatchToProps)(Anecdotes)
+export default ConnectedAnecdotes
